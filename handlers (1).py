@@ -705,13 +705,13 @@ async def referral_withdraw_start(message: Message, bot: Bot):
         await message.answer("❌ Bonus balansi 0.")
         return
     if err == "min":
-        await message.answer("❌ Bonus yechish uchun minimal summa hali yetarli emas.")
+        await message.answer("❌ Бонус ечиш учун минимал сумма хали етарли емас.")
         return
     if err == "pending":
-        await message.answer("⏳ Sizda allaqachon kutilayotgan bonus yechish so'rovi bor.")
+        await message.answer("⏳ Сизда аллакачон кутилаетган бонус ечиш сурови бор.")
         return
     if not req:
-        await message.answer("❌ So'rov yuborilmadi. Qayta urinib ko'ring.")
+        await message.answer("❌ Суров йуборилмади. Кайта уриниб куринг.")
         return
 
     user = get_user(message.from_user.id) or {}
@@ -720,12 +720,12 @@ async def referral_withdraw_start(message: Message, bot: Bot):
     phone = user.get("phone", "—")
 
     admin_text = (
-        f"💸 Referral bonus yechish so'rovi #{req['id']}\n\n"
+        f"💸 Реферал бонус ечиш сурови #{req['id']}\n\n"
         f"👤 {full_name} ({username})\n"
         f"🆔 {req['user_id']}\n"
         f"📞 {phone}\n\n"
-        f"💰 Miqdor: {format_money(req['amount'])} so'm\n"
-        f"💳 Karta: {req['card']}\n"
+        f"💰 Микдор: {format_money(req['amount'])} Сум\n"
+        f"💳 Карта: {req['card']}\n"
         f"🕐 {req['created_at']}"
     )
 
@@ -738,7 +738,7 @@ async def referral_withdraw_start(message: Message, bot: Bot):
     if lang == "ru":
         await message.answer("✅ Запрос отправлен админу. Ожидайте подтверждения.")
     else:
-        await message.answer("✅ So'rovingiz adminga yuborildi. Tasdiqlanishini kuting.")
+        await message.answer("✅ Суровингиз админга йуборилди. Тасдикланишини кутинг.")
 
 
 @router.message(F.text.in_(REFERRAL_HOME_BUTTONS))
@@ -751,60 +751,60 @@ async def referral_go_home(message: Message, state: FSMContext):
 @router.callback_query(F.data.startswith("RWD_OK_"))
 async def referral_withdraw_approve(callback: CallbackQuery, bot: Bot):
     if callback.from_user.id not in ADMIN_IDS:
-        await callback.answer("❌ Ruxsat yo'q", show_alert=True)
+        await callback.answer("❌ Рухсат йук", show_alert=True)
         return
     try:
         req_id = int(callback.data.split("_")[-1])
     except Exception:
-        await callback.answer("❌ Xato", show_alert=True)
+        await callback.answer("❌ Хато", show_alert=True)
         return
 
     req, user, err = approve_withdraw_request(req_id, callback.from_user.id)
     if err == "not_found":
-        await callback.answer("❌ So'rov topilmadi", show_alert=True)
+        await callback.answer("❌ Суров топилмади", show_alert=True)
         return
     if err == "already_processed":
-        await callback.answer("⚠️ So'rov avval qayta ishlangan", show_alert=True)
+        await callback.answer("⚠️ Суров аввал кайта ишланган", show_alert=True)
         return
 
     if req:
         uid = req.get("user_id")
         if uid:
             try:
-                await bot.send_message(uid, f"✅ Referral bonusingiz chiqarildi.\n💸 {format_money(req.get('amount', 0))} so'm")
+                await bot.send_message(uid, f"✅ Реферал бонусингиз чикарилди.\n💸 {format_money(req.get('amount', 0))} so'm")
             except Exception:
                 pass
-    await callback.message.edit_text(f"✅ Referral so'rov #{req_id} tasdiqlandi.")
+    await callback.message.edit_text(f"✅ Реферал сурови #{req_id} тасдикланди.")
     await callback.answer("✅")
 
 
 @router.callback_query(F.data.startswith("RWD_NO_"))
 async def referral_withdraw_reject(callback: CallbackQuery, bot: Bot):
     if callback.from_user.id not in ADMIN_IDS:
-        await callback.answer("❌ Ruxsat yo'q", show_alert=True)
+        await callback.answer("❌ Рухсат йук", show_alert=True)
         return
     try:
         req_id = int(callback.data.split("_")[-1])
     except Exception:
-        await callback.answer("❌ Xato", show_alert=True)
+        await callback.answer("❌ Хато", show_alert=True)
         return
 
     req, user, err = reject_withdraw_request(req_id, callback.from_user.id)
     if err == "not_found":
-        await callback.answer("❌ So'rov topilmadi", show_alert=True)
+        await callback.answer("❌ Суров топилмади", show_alert=True)
         return
     if err == "already_processed":
-        await callback.answer("⚠️ So'rov avval qayta ishlangan", show_alert=True)
+        await callback.answer("⚠️ Суров аввал кайта ишланган", show_alert=True)
         return
 
     if req:
         uid = req.get("user_id")
         if uid:
             try:
-                await bot.send_message(uid, "❌ Referral bonus yechish so'rovi bekor qilindi. Bonus balansga qaytarildi.")
+                await bot.send_message(uid, "❌ Реферал бонус ечиш сурови бекор килинди. Бонус балансга кайтарилди.")
             except Exception:
                 pass
-    await callback.message.edit_text(f"❌ Referral so'rov #{req_id} bekor qilindi.")
+    await callback.message.edit_text(f"❌ Реферал суров #{req_id} бекор килинди.")
     await callback.answer("❌")
 
 
