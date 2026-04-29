@@ -666,7 +666,7 @@ async def referral_card_start(message: Message, state: FSMContext):
     if lang == "ru":
         await message.answer("💳 Введите номер карты для вывода бонуса:")
     else:
-        await message.answer("💳 Bonus yechish uchun kartangizni kiriting:")
+        await message.answer("💳 Бонус ечиш учун картангизни киритинг:")
 
 
 @router.message(ReferralState.waiting_card)
@@ -676,21 +676,21 @@ async def referral_card_save(message: Message, state: FSMContext, bot: Bot):
         lang = get_lang(message.from_user.id)
         await message.answer(t(lang, "main_menu"), reply_markup=main_menu_keyboard(lang))
         return
-    if (message.text or "").strip() in ["🔙 Orqaga", "🔙 Назад"]:
+    if (message.text or "").strip() in ["🔙 Оркага", "🔙 Назад"]:
         await state.clear()
         await send_referral_panel(message, bot)
         return
 
     card = (message.text or "").replace(" ", "")
     if not card or len(card) < 8:
-        await message.answer("❌ Karta raqamini to'g'ri kiriting.")
+        await message.answer("❌ Карта ракамини тугри киритинг.")
         return
     ok = update_referral_card(message.from_user.id, card)
     await state.clear()
     if not ok:
-        await message.answer("❌ Saqlashda xatolik bo'ldi.")
+        await message.answer("❌ Саклашда хатолик булди.")
         return
-    await message.answer("✅ Karta saqlandi.")
+    await message.answer("✅ Карта сакланди.")
     await send_referral_panel(message, bot)
 
 
@@ -699,10 +699,10 @@ async def referral_withdraw_start(message: Message, bot: Bot):
     lang = get_lang(message.from_user.id)
     req, err = create_withdraw_request(message.from_user.id)
     if err == "no_card":
-        await message.answer("❌ Avval kartani kiriting.")
+        await message.answer("❌ Аввал картани киритинг.")
         return
     if err == "zero":
-        await message.answer("❌ Bonus balansi 0.")
+        await message.answer("❌ Бонус Баланси 0.")
         return
     if err == "min":
         await message.answer("❌ Бонус ечиш учун минимал сумма хали етарли емас.")
