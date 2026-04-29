@@ -176,7 +176,7 @@ def _delete_user_wallet(user_id: int, cur_id: str) -> bool:
 def _partners_text(user_id: int, lang: str) -> str:
     wallets = _get_user_wallets(user_id)
     empty = "пусто" if lang == "ru" else "bo'sh"
-    title = "📁 Список ваших кошельков:" if lang == "ru" else "📁 Sizning hamyonlaringiz:"
+    title = "📁 Список ваших кошельков:" if lang == "ru" else "📁 Сизнинг хаменларингиз:"
     lines = [title, ""]
     for cur in CURRENCIES:
         val = wallets.get(cur["id"], empty)
@@ -219,12 +219,12 @@ def _normalize_created_at(value: str) -> str:
 def _order_status_label(status: str, lang: str) -> str:
     st = (status or "").strip()
     if st in ("pending_payment", "receipt_sent"):
-        return "New"
+        return "Янги"
     if st == "completed":
-        return "Tasdiqlangan" if lang == "uz" else "Подтверждено"
+        return "Тасдикланган" if lang == "uz" else "Подтверждено"
     if st == "cancelled":
-        return "Bekor qilingan" if lang == "uz" else "Отменено"
-    return st or ("Noma'lum" if lang == "uz" else "Неизвестно")
+        return "Бекор килинган" if lang == "uz" else "Отменено"
+    return st or ("номалум" if lang == "uz" else "Неизвестно")
 
 
 def _get_user_orders(user_id: int) -> list[dict]:
@@ -249,18 +249,18 @@ def _format_order_block(order: dict, lang: str) -> str:
     status = _order_status_label(order.get("status", ""), lang)
     created_at = _normalize_created_at(order.get("created_at", ""))
     return (
-        f"🆔 ID: {order.get('order_id', '—')}\n"
+        f"🆔 ИД: {order.get('order_id', '—')}\n"
         f"🔁 {order.get('from_name', '—')} → {order.get('to_name', '—')}\n"
         f"💰 {send_amount} → {recv_amount}\n"
-        f"📤 Yuboruvchi: {sender}\n"
-        f"📥 Qabul qiluvchi: {receiver}\n"
-        f"📅 Yaratilgan: {created_at}\n"
+        f"📤 Йуборувчи: {sender}\n"
+        f"📥 Кабул килувчи: {receiver}\n"
+        f"📅 Яратилган: {created_at}\n"
         f"📌 {status}"
     )
 
 
 def _transfers_inline_kb(lang: str) -> InlineKeyboardMarkup:
-    text = "📣 Barcha almashuvlarni ko'rish" if lang == "uz" else "📣 Показать все обмены"
+    text = "📣 Барча алмашувларни куриш" if lang == "uz" else "📣 Показать все обмены"
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=text, callback_data="TR_ALL")]
     ])
@@ -277,7 +277,7 @@ def _paginate_order_blocks(blocks: list[str], lang: str, first_title: str) -> li
     for block in blocks:
         add = len(block) + (len(sep) if current_blocks else 0)
         if current_blocks and (current_len + add) > limit:
-            prefix = first_title if not pages else ("🔄 Davomi:" if lang == "uz" else "🔄 Продолжение:")
+            prefix = first_title if not pages else ("🔄 Давоми:" if lang == "uz" else "🔄 Продолжение:")
             pages.append(prefix + "\n\n" + sep.join(current_blocks))
             current_blocks = [block]
             current_len = len(block)
@@ -285,7 +285,7 @@ def _paginate_order_blocks(blocks: list[str], lang: str, first_title: str) -> li
             current_blocks.append(block)
             current_len += add
     if current_blocks:
-        prefix = first_title if not pages else ("🔄 Davomi:" if lang == "uz" else "🔄 Продолжение:")
+        prefix = first_title if not pages else ("🔄 Давоми:" if lang == "uz" else "🔄 Продолжение:")
         pages.append(prefix + "\n\n" + sep.join(current_blocks))
     return pages
 
@@ -325,7 +325,7 @@ async def cmd_start(message: Message, state: FSMContext, bot: Bot):
         user = get_user(user_id)
         if user and user.get("registered"):
             lang = user.get("lang", "uz")
-            await message.answer("👨‍💼 Xush kelibsiz, Admin!", reply_markup=main_menu_keyboard(lang))
+            await message.answer("👨‍💼 Хуш келибсиз, админ!", reply_markup=main_menu_keyboard(lang))
             return
 
     user = get_user(user_id)
@@ -393,7 +393,7 @@ async def enter_name(message: Message, state: FSMContext):
 
     name = message.text.strip()
     if not name or len(name) < 2:
-        await message.answer("❌ Iltimos, to'g'ri ism kiriting (kamida 2 ta harf):")
+        await message.answer("❌ Илтимос, тугри исм киритинг (камида 2 та харф):")
         return
 
     await state.update_data(name=name)
@@ -408,7 +408,7 @@ async def enter_surname(message: Message, state: FSMContext):
 
     surname = message.text.strip()
     if not surname or len(surname) < 2:
-        await message.answer("❌ Iltimos, to'g'ri familiya kiriting (kamida 2 ta harf):")
+        await message.answer("❌ Илтимос, тугри фамилия киритинг (камида 2 та харф):")
         return
 
     await state.update_data(surname=surname)
@@ -435,7 +435,7 @@ async def enter_phone_text(message: Message, state: FSMContext):
     # Basic phone validation
     cleaned = phone.replace("+", "").replace(" ", "").replace("-", "")
     if not cleaned.isdigit() or len(cleaned) < 9:
-        await message.answer("❌ Iltimos, to'g'ri telefon raqam kiriting:")
+        await message.answer("❌ Илтииос, тугри телефон ракам киритинг:")
         return
 
     await finish_registration(message, state, data, phone, lang)
@@ -466,13 +466,13 @@ async def finish_registration(message: Message, state: FSMContext, data: dict, p
         reply_markup=main_menu_keyboard(lang)
     )
 
-@router.message(F.text.in_(["💱 Valyuta ayirboshlash", "💱 Обмен валют"]))
+@router.message(F.text.in_(["💱 Валюта айирбошлаш", "💱 Обмен валют"]))
 async def menu_exchange(message: Message):
     lang = get_lang(message.from_user.id)
     await message.answer(t(lang, "exchange_menu"))
 
 
-@router.message(F.text.in_(["📊 Kurs", "📊 Курс"]))
+@router.message(F.text.in_(["📊 Курс", "📊 Курс"]))
 async def menu_rates(message: Message, bot: Bot):
     lang = get_lang(message.from_user.id)
     from database import load_db
@@ -504,7 +504,7 @@ async def menu_rates(message: Message, bot: Bot):
     await message.answer(text)
 
 
-@router.message(F.text.in_(["👥 Hamënlar", "👥 Партнёры"]))
+@router.message(F.text.in_(["👥 Хаменлар", "👥 Кошелки"]))
 async def menu_partners(message: Message):
     await send_partners_panel(message)
 
