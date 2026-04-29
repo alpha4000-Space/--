@@ -27,34 +27,34 @@ from referral_service import (
 )
 
 router = Router()
-REFERRAL_CARD_BUTTONS = ["💳 Kartani qo'shish/yangilash", "💳 Добавить/обновить карту"]
-REFERRAL_WITHDRAW_BUTTONS = ["💰 Bonusni yechib olish", "💰 Вывести бонус"]
-REFERRAL_HOME_BUTTONS = ["🏠 Bosh menyu", "🏠 Главное меню"]
-PARTNERS_ADD_BUTTONS = ["✏️ Qo'shish / o'zgartirish", "✏️ Добавить / изменить"]
-PARTNERS_DELETE_BUTTONS = ["❌ O'chirish", "❌ Удалить"]
+REFERRAL_CARD_BUTTONS = ["💳 Картани кушиш/Янгилаш", "💳 Добавить/обновить карту"]
+REFERRAL_WITHDRAW_BUTTONS = ["💰 Бонусни ечиб олиш", "💰 Вывести бонус"]
+REFERRAL_HOME_BUTTONS = ["🏠 Бош меню", "🏠 Главное меню"]
+PARTNERS_ADD_BUTTONS = ["✏️ Кушиш / узгартириш", "✏️ Добавить / изменить"]
+PARTNERS_DELETE_BUTTONS = ["❌ Учириш", "❌ Удалить"]
 SUPPORT_MENU_TEXTS = [
-    "💱 Valyuta ayirboshlash", "💱 Обмен валют",
-    "📊 Kurs", "📊 Курс",
-    "👥 Hamënlar", "👥 Партнёры",
-    "👥 Referal", "👥 Реферал",
-    "⚙️ Sozlamalar", "⚙️ Настройки",
-    "📞 Qayta aloqa", "📞 Обратная связь",
-    "🔄 Almashuvlar", "🔄 Переводы",
-    "📖 Qo`llanma", "📖 Руководство",
-    "🔙 Orqaga", "🔙 Назад",
+    "💱 Валюта айирбошлаш", "💱 Обмен валют",
+    "📊 Курс", "📊 Курс",
+    "👥 Хаменлар", "👥 Кошелки",
+    "👥 Реферал", "👥 Реферал",
+    "⚙️ Созламалар", "⚙️ Настройки",
+    "📞 Кайта алока", "📞 Обратная связь",
+    "🔄 Алмашувлар", "🔄 Переводы",
+    "📖 Кулланма", "📖 Руководство",
+    "🔙 Оркага", "🔙 Назад",
 ]
 
 
 def referral_withdraw_kb(req_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"RWD_OK_{req_id}")],
-        [InlineKeyboardButton(text="❌ Bekor qilish", callback_data=f"RWD_NO_{req_id}")],
+        [InlineKeyboardButton(text="✅ Тасдиклаш", callback_data=f"RWD_OK_{req_id}")],
+        [InlineKeyboardButton(text="❌ Бекор килиш", callback_data=f"RWD_NO_{req_id}")],
     ])
 
 
 def support_admin_reply_kb(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="✍️ Javob yozish", callback_data=f"SUP_REPLY_{user_id}")]
+        [InlineKeyboardButton(text="✍️ Жавоб езиш", callback_data=f"SUP_REPLY_{user_id}")]
     ])
 
 
@@ -66,7 +66,7 @@ def _support_header_text(message: Message) -> str:
     phone = user.get("phone", "—")
     created = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
     return (
-        "📞 Qayta aloqa xabari\n\n"
+        "📞 Кайта алока хабари\n\n"
         f"👤 {full_name} ({username})\n"
         f"🆔 {user_id}\n"
         f"📞 {phone}\n"
@@ -106,11 +106,11 @@ async def send_referral_panel(message: Message, bot: Bot):
         )
     else:
         text = (
-            "👥 Sizning referal bo'limingiz\n\n"
-            f"🔗 Havola: {link}\n\n"
-            f"👤 Referallar soni: {referrals}\n"
-            f"💰 Bonus balansi: {bonus} so'm\n"
-            f"💳 Karta: {card}"
+            "👥 Сизнинг ранферал булимингиз\n\n"
+            f"🔗 Хавола: {link}\n\n"
+            f"👤 Рефераллар сони: {referrals}\n"
+            f"💰 Бонус баланси: {bonus} so'm\n"
+            f"💳 Карта: {card}"
         )
     await message.answer(text, reply_markup=referral_inline_keyboard(lang))
 
