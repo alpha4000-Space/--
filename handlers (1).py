@@ -815,7 +815,7 @@ async def menu_callback(message: Message, state: FSMContext):
     if lang == "ru":
         await message.answer("✍️ Пожалуйста, напишите ваше сообщение для админов:")
     else:
-        await message.answer("✍️ Iltimos, adminlarga yuborish uchun xabaringizni yozing:")
+        await message.answer("✍️ Илтимос, админларга йубориш учун хабарингизни йозинг:")
 
 
 @router.message(SupportState.user_writing, F.text & ~F.text.in_(SUPPORT_MENU_TEXTS))
@@ -825,7 +825,7 @@ async def support_user_text(message: Message, bot: Bot):
     if lang == "ru":
         await message.answer("✅ Сообщение отправлено админам.")
     else:
-        await message.answer("✅ Xabaringiz adminlarga yuborildi.")
+        await message.answer("✅ Хабарингиз админларга йуборилди.")
 
 
 @router.message(SupportState.user_writing, F.photo | F.document | F.video | F.voice | F.audio | F.sticker)
@@ -835,31 +835,31 @@ async def support_user_media(message: Message, bot: Bot):
     if lang == "ru":
         await message.answer("✅ Сообщение отправлено админам.")
     else:
-        await message.answer("✅ Xabaringiz adminlarga yuborildi.")
+        await message.answer("✅ Хабарингиз админларга йуборилди.")
 
 
 @router.callback_query(F.data.startswith("SUP_REPLY_"))
 async def support_admin_reply_start(callback: CallbackQuery, state: FSMContext):
     if callback.from_user.id not in ADMIN_IDS:
-        await callback.answer("❌ Ruxsat yo'q", show_alert=True)
+        await callback.answer("❌ Рухсат йук", show_alert=True)
         return
     try:
         uid = int(callback.data.split("_")[-1])
     except Exception:
-        await callback.answer("❌ Xato", show_alert=True)
+        await callback.answer("❌ Хато", show_alert=True)
         return
 
     user = get_user(uid)
     if not user:
-        await callback.answer("❌ User topilmadi", show_alert=True)
+        await callback.answer("❌ Усер топилмади", show_alert=True)
         return
 
     await state.set_state(SupportState.admin_replying)
     await state.update_data(support_uid=uid)
     await callback.answer()
     await callback.message.answer(
-        f"✍️ User {uid} ga yuboriladigan javobni yozing.\n"
-        f"Bekor qilish uchun: ❌ Bekor"
+        f"✍️ Усер {uid} га йубориладиган жавобни йозинг.\n"
+        f"Bekor qilish uchun: ❌ Бекор"
     )
 
 
@@ -868,23 +868,23 @@ async def support_admin_reply_text(message: Message, state: FSMContext, bot: Bot
     if message.from_user.id not in ADMIN_IDS:
         return
     text = (message.text or "").strip()
-    if text == "❌ Bekor":
+    if text == "❌ Бекор":
         await state.clear()
-        await message.answer("❌ Bekor qilindi.")
+        await message.answer("❌ Бекор килинди.")
         return
 
     data = await state.get_data()
     uid = data.get("support_uid")
     if not uid:
         await state.clear()
-        await message.answer("❌ Session tugagan, qayta urinib ko'ring.")
+        await message.answer("❌ Сессия тугаган, Кайта уриниб куринг.")
         return
 
     try:
-        await bot.send_message(int(uid), f"👨‍💼 Admin javobi:\n\n{text}")
-        await message.answer("✅ Javob yuborildi.")
+        await bot.send_message(int(uid), f"👨‍💼 Админ жавоби:\n\n{text}")
+        await message.answer("✅ Жавоб йуборилди.")
     except Exception:
-        await message.answer("❌ Javob yuborilmadi.")
+        await message.answer("❌ Жавоб йуборилмади.")
     await state.clear()
 
 
@@ -897,19 +897,19 @@ async def support_admin_reply_media(message: Message, state: FSMContext, bot: Bo
     uid = data.get("support_uid")
     if not uid:
         await state.clear()
-        await message.answer("❌ Session tugagan, qayta urinib ko'ring.")
+        await message.answer("❌ Сессия тугаган, Кайта уриниб куринг.")
         return
 
     try:
-        await bot.send_message(int(uid), "👨‍💼 Admindan media xabar:")
+        await bot.send_message(int(uid), "👨‍💼 Админдан медиа хабар:")
         await bot.copy_message(int(uid), message.chat.id, message.message_id)
-        await message.answer("✅ Javob yuborildi.")
+        await message.answer("✅ Жавоб йуборилди.")
     except Exception:
-        await message.answer("❌ Javob yuborilmadi.")
+        await message.answer("❌ Жавоб йуборилмади.")
     await state.clear()
 
 
-@router.message(F.text.in_(["🔄 Almashuvlar", "🔄 Переводы"]))
+@router.message(F.text.in_(["🔄 Алмашувлар", "🔄 Переводы"]))
 async def menu_transfers(message: Message):
     lang = get_lang(message.from_user.id)
     orders = _get_user_orders(message.from_user.id)
@@ -917,8 +917,8 @@ async def menu_transfers(message: Message):
         title = "🔄 Ваши обмены:"
         empty = "📭 У вас пока нет обменов."
     else:
-        title = "🔄 Sizning almashuvlaringiz:"
-        empty = "📭 Sizda hali almashuvlar yo'q."
+        title = "🔄 Сизнинг алмашувларингиз:"
+        empty = "📭 Сизда хали алмашувлар йук."
 
     if not orders:
         await message.answer(f"{title}\n\n{empty}")
@@ -938,9 +938,9 @@ async def menu_transfers_all(callback: CallbackQuery):
     lang = get_lang(callback.from_user.id)
     orders = _get_user_orders(callback.from_user.id)
     if not orders:
-        await callback.answer("📭 Almashuv yo'q", show_alert=True)
+        await callback.answer("📭 Алмашув йук", show_alert=True)
         return
-    title = "🔄 Barcha almashuvlaringiz:" if lang == "uz" else "🔄 Все ваши обмены:"
+    title = "🔄 Барча алмашувларингиз:" if lang == "uz" else "🔄 Все ваши обмены:"
     blocks = [_format_order_block(o, lang) for o in orders]
     pages = _paginate_order_blocks(blocks, lang, title)
     for page_text in pages:
@@ -948,12 +948,12 @@ async def menu_transfers_all(callback: CallbackQuery):
     await callback.answer()
 
 
-@router.message(F.text.in_(["📖 Qo`llanma", "📖 Руководство"]))
+@router.message(F.text.in_(["📖 Кулланма", "📖 Руководство"]))
 async def menu_guide(message: Message):
     lang = get_lang(message.from_user.id)
     await message.answer(t(lang, "guide_menu"))
 
-@router.message(F.text.in_(["⚙️ Sozlamalar", "⚙️ Настройки"]))
+@router.message(F.text.in_(["⚙️ Созламалар", "⚙️ Настройки"]))
 async def menu_settings(message: Message, state: FSMContext):
     user_id = message.from_user.id
     lang = get_lang(user_id)
@@ -997,7 +997,7 @@ async def change_name_finish(message: Message, state: FSMContext):
     name = message.text.strip()
 
     if not name or len(name) < 2:
-        await message.answer("❌ Iltimos, to'g'ri ism kiriting:")
+        await message.answer("❌ Илтимос, тугри исм киритинг:")
         return
 
     user = get_user(user_id)
@@ -1028,7 +1028,7 @@ async def change_phone_text(message: Message, state: FSMContext):
     phone = message.text.strip()
     cleaned = phone.replace("+", "").replace(" ", "").replace("-", "")
     if not cleaned.isdigit() or len(cleaned) < 9:
-        await message.answer("❌ Илтимос, Тугри телефон ракам киритинн:")
+        await message.answer("❌ Илтимос, Тугри телефон ракам киритинг:")
         return
     user = get_user(user_id)
     user["phone"] = phone
