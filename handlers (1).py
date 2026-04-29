@@ -1028,7 +1028,7 @@ async def change_phone_text(message: Message, state: FSMContext):
     phone = message.text.strip()
     cleaned = phone.replace("+", "").replace(" ", "").replace("-", "")
     if not cleaned.isdigit() or len(cleaned) < 9:
-        await message.answer("❌ Iltimos, to'g'ri telefon raqam kiriting:")
+        await message.answer("❌ Илтимос, Тугри телефон ракам киритинн:")
         return
     user = get_user(user_id)
     user["phone"] = phone
@@ -1038,7 +1038,7 @@ async def change_phone_text(message: Message, state: FSMContext):
     await message.answer(text, reply_markup=settings_inline_keyboard(lang))
 
 
-@router.message(F.text.in_(["🔙 Orqaga", "🔙 Назад"]))
+@router.message(F.text.in_(["🔙 Оркага", "🔙 Назад"]))
 async def go_back(message: Message, state: FSMContext):
     lang = get_lang(message.from_user.id)
     await state.clear()
@@ -1049,15 +1049,15 @@ async def go_back(message: Message, state: FSMContext):
 async def admin_panel(message: Message):
     if message.from_user.id not in ADMIN_IDS:
         return
-    await message.answer("👨‍💼 Admin panel", reply_markup=admin_keyboard())
+    await message.answer("👨‍💼 Админ панел", reply_markup=admin_keyboard())
 
 
-@router.message(F.text == "➕ Kanal qo'shish")
+@router.message(F.text == "➕ Канал кушиш")
 async def admin_add_channel_start(message: Message, state: FSMContext):
     if message.from_user.id not in ADMIN_IDS:
         return
     await state.set_state(AdminState.waiting_channel_id)
-    await message.answer("Kanal ID sini kiriting (masalan: -1001234567890):\n\n💡 Botni kanalga admin qilib qo'shing!")
+    await message.answer("Kanal ID sini kiriting (masalan: -1001234567890):\n\n💡 Ботни каналга админ килиб кушинг!")
 
 
 @router.message(AdminState.waiting_channel_id)
@@ -1068,9 +1068,9 @@ async def admin_add_channel_id(message: Message, state: FSMContext):
         channel_id = int(message.text.strip())
         await state.update_data(channel_id=channel_id)
         await state.set_state(AdminState.waiting_channel_link)
-        await message.answer("Kanal havolasini kiriting (masalan: https://t.me/kanalim):")
+        await message.answer("Канал хаволасини киритинг (масалан: https://t.me/kanalim):")
     except ValueError:
-        await message.answer("❌ Noto'g'ri format! ID son bo'lishi kerak:")
+        await message.answer("❌ Нотугри формат ИД сон булиши керак:")
 
 
 @router.message(AdminState.waiting_channel_link)
@@ -1094,19 +1094,19 @@ async def admin_add_channel_name(message: Message, state: FSMContext):
     await state.clear()
 
     if result:
-        await message.answer(f"✅ Kanal qo'shildi!\n📢 {name}\n🔗 {data['channel_link']}", reply_markup=admin_keyboard())
+        await message.answer(f"✅ Канал кушилди!\n📢 {name}\n🔗 {data['channel_link']}", reply_markup=admin_keyboard())
     else:
-        await message.answer("❌ Bu kanal allaqachon mavjud!", reply_markup=admin_keyboard())
+        await message.answer("❌ Бу канал аллакачон мавжуд!", reply_markup=admin_keyboard())
 
 
-@router.message(F.text == "➖ Kanal o'chirish")
+@router.message(F.text == "➖ Канал учириш")
 async def admin_remove_channel_start(message: Message, state: FSMContext):
     if message.from_user.id not in ADMIN_IDS:
         return
     from database import get_channels
     channels = get_channels()
     if not channels:
-        await message.answer("📭 Kanallar yo'q!")
+        await message.answer("📭 Каналлар йук!")
         return
 
     text = "📋 Mavjud kanallar:\n\n"
@@ -1127,11 +1127,11 @@ async def admin_remove_channel(message: Message, state: FSMContext):
         result = remove_channel(channel_id)
         await state.clear()
         if result:
-            await message.answer("✅ Kanal o'chirildi!", reply_markup=admin_keyboard())
+            await message.answer("✅ Канал учирилди!", reply_markup=admin_keyboard())
         else:
-            await message.answer("❌ Kanal topilmadi!", reply_markup=admin_keyboard())
+            await message.answer("❌ Канал топилмади!", reply_markup=admin_keyboard())
     except ValueError:
-        await message.answer("❌ Noto'g'ri format!")
+        await message.answer("❌ Нотугри формат!")
 
 
 @router.message(F.text == "📋 Kanallar ro'yxati")
@@ -1141,24 +1141,24 @@ async def admin_list_channels(message: Message):
     from database import get_channels
     channels = get_channels()
     if not channels:
-        await message.answer("📭 Hech qanday kanal qo'shilmagan!")
+        await message.answer("📭 Хеч кандай канал кушилмаган!")
         return
 
-    text = "📋 Kanallar ro'yxati:\n\n"
+    text = "📋 Каналлар руйхати:\n\n"
     for i, ch in enumerate(channels, 1):
         text += f"{i}. {ch['channel_name']}\n   🔗 {ch['channel_link']}\n   🆔 {ch['channel_id']}\n\n"
     await message.answer(text)
 
 
-@router.message(F.text == "👥 Foydalanuvchilar")
+@router.message(F.text == "👥 Фойдаланувчилар")
 async def admin_users_count(message: Message):
     if message.from_user.id not in ADMIN_IDS:
         return
     users = get_all_users()
-    await message.answer(f"👥 Jami foydalanuvchilar: {len(users)} ta")
+    await message.answer(f"👥 Жами фойдаланувчилар: {len(users)} ta")
 
 
-@router.message(F.text == "📨 Hammaga xabar")
+@router.message(F.text == "📨 Хаммага хабар")
 async def admin_broadcast_start(message: Message, state: FSMContext):
     if message.from_user.id not in ADMIN_IDS:
         return
@@ -1181,7 +1181,7 @@ async def admin_broadcast_send(message: Message, state: FSMContext, bot: Bot):
             pass
 
     await state.clear()
-    await message.answer(f"✅ Xabar {count} ta foydalanuvchiga yuborildi!", reply_markup=admin_keyboard())
+    await message.answer(f"✅ Хабар {count} та фойдаланувчига йуборилди!", reply_markup=admin_keyboard())
 
 
 @router.callback_query(F.data.startswith("lang_"))
@@ -1201,7 +1201,7 @@ async def handle_lang_callback(callback: CallbackQuery, state: FSMContext):
                 save_user(user_id, user)
             await state.clear()
             await callback.message.delete()
-            await callback.answer(f"✅ Til o'zgartirildi!")
+            await callback.answer(f"✅ Тил узгартирилди!")
             await callback.message.answer(t(lang, "main_menu"), reply_markup=main_menu_keyboard(lang))
         else:
             await state.update_data(lang=lang)
